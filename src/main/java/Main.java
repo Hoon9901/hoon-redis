@@ -53,7 +53,6 @@ public class Main {
         while ((data = br.readLine()) != null) {
             Logger.info(data);
             pw.print("+PONG\r\n");
-            pw.flush();
         }
     }
 }
