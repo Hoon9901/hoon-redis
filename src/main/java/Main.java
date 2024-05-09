@@ -1,7 +1,4 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -38,29 +35,25 @@ public class Main {
     }
 
     public static void printLogo() {
-        System.out.println("Hoon Redis");
-        System.out.println("listening on port 6379 (tcp)");
+        Logger.info("Hoon Redis");
+        Logger.info("listening on port 6379 (tcp)");
     }
 
     public static void client(Socket clientSocket) {
-        System.out.println(clientSocket.getLocalAddress() + " is connected");
-        try (InputStream inputStream = clientSocket.getInputStream(); OutputStream outputStream = clientSocket.getOutputStream()) {
-            loop(inputStream, outputStream);
+        Logger.info(clientSocket + "is connected");
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream())) {
+            loop(br, printWriter);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void loop(InputStream inputStream, OutputStream outputStream) throws IOException {
-        byte[] buffer = new byte[1024];
-        int dataSize = 0;
-        while ((dataSize = inputStream.read(buffer)) != -1) {
-            String message = new String(buffer, 0, dataSize);
-            System.out.println(message);
-
-            PrintWriter writer = new PrintWriter(outputStream);
-            writer.print("+PONG\r\n");
-            writer.flush();
+    public static void loop(BufferedReader br, PrintWriter pw) throws IOException {
+        String data;
+        while ((data = br.readLine()) != null) {
+            Logger.info(data);
+            pw.print("+PONG\r\n");
+            pw.flush();
         }
     }
 }
