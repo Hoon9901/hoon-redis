@@ -19,7 +19,7 @@ public class ClientTask implements Runnable {
             Logger.error("IOException: " + e.getMessage());
         } finally {
             try {
-                if (clientSocket != null && !clientSocket.isClosed()) {
+                if (clientSocket != null) {
                     clientSocket.close();
                     Logger.info(clientSocket + " is close");
                 }
