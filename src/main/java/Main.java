@@ -22,14 +22,14 @@ public class Main {
             clientSocket = serverSocket.accept();
             client(clientSocket);
         } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
+            Logger.error("IOException: " + e.getMessage());
         } finally {
             try {
                 if (clientSocket != null) {
                     clientSocket.close();
                 }
             } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
+                Logger.error("IOException: " + e.getMessage());
             }
         }
     }
@@ -39,12 +39,11 @@ public class Main {
         Logger.info("listening on port 6379 (tcp)");
     }
 
-    public static void client(Socket clientSocket) {
+    public static void client(Socket clientSocket) throws IOException {
         Logger.info(clientSocket + "is connected");
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream())) {
-            loop(br, printWriter);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             PrintWriter pw = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
+            loop(br, pw);
         }
     }
 
@@ -52,7 +51,8 @@ public class Main {
         String data;
         while ((data = br.readLine()) != null) {
             Logger.info(data);
-            pw.print("+PONG\r\n");
+            pw.println("+PONG\r");
+            pw.flush();
         }
     }
 }
