@@ -26,8 +26,8 @@ public class Main {
     public static void loop(ServerSocket serverSocket) throws IOException {
         while (!serverSocket.isClosed()) {
             Socket clientSocket = serverSocket.accept();
-            Client client = new Client(clientSocket);
-            client.run();
+            new Thread(new ClientTask(clientSocket)).start();
+            // Thread.ofVirtual().start(new Client(clientSocket));
         }
     }
 }
