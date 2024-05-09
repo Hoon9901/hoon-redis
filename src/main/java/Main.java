@@ -6,7 +6,6 @@ public class Main {
 
     /**
      * <p>TCP/IP 기반 Redis 서버 엔트리 포인트</p>
-     *
      */
     public static void main(String[] args) {
         ServerSocket serverSocket = null; //
@@ -51,8 +50,10 @@ public class Main {
         String data;
         while ((data = br.readLine()) != null) {
             Logger.info(data);
-            pw.println("+PONG\r");
-            pw.flush();
+            if (data.equalsIgnoreCase("PING")) {
+                pw.println("+PONG\r");
+                pw.flush();
+            }
         }
     }
 }
