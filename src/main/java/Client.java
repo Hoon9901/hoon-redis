@@ -3,7 +3,7 @@ import java.net.Socket;
 
 public class Client implements Runnable {
 
-    private Socket clientSocket;
+    private final Socket clientSocket;
 
     public Client(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -19,7 +19,7 @@ public class Client implements Runnable {
             Logger.error("IOException: " + e.getMessage());
         } finally {
             try {
-                if (clientSocket != null) {
+                if (clientSocket != null && !clientSocket.isClosed()) {
                     clientSocket.close();
                     Logger.info(clientSocket + " is close");
                 }

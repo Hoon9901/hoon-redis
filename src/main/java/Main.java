@@ -24,7 +24,7 @@ public class Main {
     }
 
     public static void loop(ServerSocket serverSocket) throws IOException {
-        while (true) {
+        while (!serverSocket.isClosed()) {
             Socket clientSocket = serverSocket.accept();
             Client client = new Client(clientSocket);
             client.run();
