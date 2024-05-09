@@ -12,11 +12,10 @@ public class Main {
      *
      */
     public static void main(String[] args) {
-        System.out.println("Hoon Redis");
-        System.out.println("listening on port 6379 (tcp)");
         ServerSocket serverSocket = null; //
         Socket clientSocket = null;
         int port = 6379;
+        printLogo();
         try {
             serverSocket = new ServerSocket(port);
             // Since the tester restarts your program quite often, setting SO_REUSEADDR
@@ -24,19 +23,7 @@ public class Main {
             serverSocket.setReuseAddress(true);
             // Wait for connection from client.
             clientSocket = serverSocket.accept();
-            System.out.println(clientSocket.getLocalAddress() + " is connected");
-            try(InputStream inputStream = clientSocket.getInputStream(); OutputStream outputStream = clientSocket.getOutputStream()) {
-                byte[] buffer = new byte[1024];
-                int dataSize = 0;
-                while((dataSize = inputStream.read(buffer)) != -1) {
-                    String message = new String(buffer, 0, dataSize);
-                    System.out.println(message);
-
-                    PrintWriter writer = new PrintWriter(outputStream);
-                    writer.print("+PONG\r\n");
-                    writer.flush();
-                }
-            }
+            client(clientSocket);
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         } finally {
@@ -47,6 +34,33 @@ public class Main {
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
             }
+        }
+    }
+
+    public static void printLogo() {
+        System.out.println("Hoon Redis");
+        System.out.println("listening on port 6379 (tcp)");
+    }
+
+    public static void client(Socket clientSocket) {
+        System.out.println(clientSocket.getLocalAddress() + " is connected");
+        try (InputStream inputStream = clientSocket.getInputStream(); OutputStream outputStream = clientSocket.getOutputStream()) {
+            loop(inputStream, outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void loop(InputStream inputStream, OutputStream outputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+        int dataSize = 0;
+        while ((dataSize = inputStream.read(buffer)) != -1) {
+            String message = new String(buffer, 0, dataSize);
+            System.out.println(message);
+
+            PrintWriter writer = new PrintWriter(outputStream);
+            writer.print("+PONG\r\n");
+            writer.flush();
         }
     }
 }
