@@ -1,11 +1,11 @@
 import java.io.*;
 import java.net.Socket;
 
-public class Client implements Runnable {
+public class ClientTask implements Runnable {
 
     private final Socket clientSocket;
 
-    public Client(Socket clientSocket) {
+    public ClientTask(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
 
@@ -34,7 +34,7 @@ public class Client implements Runnable {
         while ((data = br.readLine()) != null) {
             Logger.info(data);
             if (data.equalsIgnoreCase("PING")) {
-                pw.println("+PONG\r");
+                pw.print("+PONG\r\n");
                 pw.flush();
             }
         }
