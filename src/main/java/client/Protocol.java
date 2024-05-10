@@ -1,6 +1,7 @@
 package client;
 
 import log.Logger;
+import server.MemoryStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -82,6 +83,24 @@ public final class Protocol {
             sb.append("\r\n");
             sb.append(echo);
             sb.append("\r\n");
+        } else if (command == Command.SET) {
+            if (args.size() != 2) {
+                throw new RuntimeException("Unknown SET process");
+            }
+            MemoryStorage.save(args.get(0), args.get(1));
+            sb.append(PLUS);
+            sb.append(ResponseKeyword.OK);
+            sb.append("\r\n");
+        } else if (command == Command.GET) {
+            if (args.size() != 1) {
+                throw new RuntimeException("Unknown GET process");
+            }
+            String value = MemoryStorage.get(args.get(0));
+            sb.append(DOLLAR);
+            sb.append(getStringLength(value));
+            sb.append("\r\n");
+            sb.append(value);
+            sb.append("\r\n");
         } else if (command == Command.UNKNOWN) {
             throw new RuntimeException("unknown command");
         }
@@ -99,7 +118,9 @@ public final class Protocol {
     }
 
     enum Command {
-        PING, ECHO, UNKNOWN;
+        PING, ECHO,
+        SET, GET,
+        UNKNOWN;
 
         public static Command from(String s) {
             try {
@@ -111,6 +132,6 @@ public final class Protocol {
     }
 
     enum ResponseKeyword {
-        PONG;
+        PONG, OK;
     }
 }
