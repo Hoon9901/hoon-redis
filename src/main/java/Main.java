@@ -1,3 +1,6 @@
+import client.ClientTask;
+import log.Logger;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -26,8 +29,8 @@ public class Main {
     public static void loop(ServerSocket serverSocket) throws IOException {
         while (!serverSocket.isClosed()) {
             Socket clientSocket = serverSocket.accept();
-            new Thread(new ClientTask(clientSocket)).start();
-            // Thread.ofVirtual().start(new Client(clientSocket));
+//            new Thread(new ClientTask(clientSocket)).start();
+             Thread.ofVirtual().start(new ClientTask(clientSocket));
         }
     }
 }
