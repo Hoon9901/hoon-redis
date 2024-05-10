@@ -11,6 +11,9 @@ public class MemoryStorage {
     }
 
     public static String get(String key) {
+        if (!storage.containsKey(key)) {
+            return "NULL";
+        }
         return storage.get(key);
     }
 
