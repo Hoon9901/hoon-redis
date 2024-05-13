@@ -122,7 +122,8 @@ public final class Protocol {
         if (response == null) {
             return;
         }
-        Logger.info(String.format("Send message: %s", response));
+        String logMessage = response.replaceAll("(\\n|\\r)", "");
+        Logger.info(String.format("Send message: %s", logMessage));
         printWriter.print(response);
         printWriter.flush();
     }
