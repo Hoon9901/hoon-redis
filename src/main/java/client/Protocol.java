@@ -88,7 +88,7 @@ public final class Protocol {
             if (args.size() < 2) {
                 throw new RuntimeException("Unknown SET process");
             }
-            if (args.size() == 4 && args.get(2).equals("px")) {
+            if (args.size() == 4 && args.get(2).equalsIgnoreCase("px")) {
                 MemoryStorage.save(args.get(0), args.get(1), Integer.valueOf(args.get(3)));
             } else {
                 MemoryStorage.save(args.get(0), args.get(1));
