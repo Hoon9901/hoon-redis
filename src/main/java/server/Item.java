@@ -16,7 +16,7 @@ public class Item {
     public Item(String value) {
         this.value = value;
         this.createdTime = LocalDateTime.now();
-        this.expiredTime = 0;
+        this.expiredTime = Integer.MAX_VALUE;
     }
 
     public Item(String value, Integer expiredTime) {
