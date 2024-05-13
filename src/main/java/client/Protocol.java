@@ -12,7 +12,8 @@ import java.util.List;
 public final class Protocol {
     private static final String DOLLAR = "$";
     private static final String ASTERISK = "*";
-    public static final String PLUS = "+";
+    private static final String PLUS = "+";
+    private static final String NULL_BULK_STRING = "$-1\r\n";
 
     public static void process(final BufferedReader br, final PrintWriter pw) throws IOException {
         String response = read(br);
@@ -84,10 +85,14 @@ public final class Protocol {
             sb.append(echo);
             sb.append("\r\n");
         } else if (command == Command.SET) {
-            if (args.size() != 2) {
+            if (args.size() < 2) {
                 throw new RuntimeException("Unknown SET process");
             }
-            MemoryStorage.save(args.get(0), args.get(1));
+            if (args.size() == 4 && args.get(2).equals("px")) {
+                MemoryStorage.save(args.get(0), args.get(1), Integer.valueOf(args.get(3)));
+            } else {
+                MemoryStorage.save(args.get(0), args.get(1));
+            }
             sb.append(PLUS);
             sb.append(ResponseKeyword.OK);
             sb.append("\r\n");
@@ -96,6 +101,11 @@ public final class Protocol {
                 throw new RuntimeException("Unknown GET process");
             }
             String value = MemoryStorage.get(args.get(0));
+            // TODO NULL 체크를 하드코딩에서 유연하게 변경
+            if (value == null) {
+                sb.append(NULL_BULK_STRING);
+                return sb.toString();
+            }
             sb.append(DOLLAR);
             sb.append(getStringLength(value));
             sb.append("\r\n");
