@@ -6,6 +6,7 @@ import server.MemoryStorage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.cert.CRL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public final class Protocol {
     private static final String ASTERISK = "*";
     private static final String PLUS = "+";
     private static final String NULL_BULK_STRING = "$-1\r\n";
+    private static final String CRLF = "\r\n";
 
     public static void process(final BufferedReader br, final PrintWriter pw) throws IOException {
         String response = read(br);
@@ -73,7 +75,7 @@ public final class Protocol {
         if (command == Command.PING) {
             sb.append(PLUS);
             sb.append(ResponseKeyword.PONG);
-            sb.append("\r\n");
+            sb.append(CRLF);
         } else if (command == Command.ECHO) {
             if (args.isEmpty()) {
                 throw new RuntimeException("Unknown ECHO process");
@@ -81,9 +83,9 @@ public final class Protocol {
             String echo = args.get(0);
             sb.append(DOLLAR);
             sb.append(getStringLength(echo));
-            sb.append("\r\n");
+            sb.append(CRLF);
             sb.append(echo);
-            sb.append("\r\n");
+            sb.append(CRLF);
         } else if (command == Command.SET) {
             if (args.size() < 2) {
                 throw new RuntimeException("Unknown SET process");
@@ -95,7 +97,7 @@ public final class Protocol {
             }
             sb.append(PLUS);
             sb.append(ResponseKeyword.OK);
-            sb.append("\r\n");
+            sb.append(CRLF);
         } else if (command == Command.GET) {
             if (args.size() != 1) {
                 throw new RuntimeException("Unknown GET process");
@@ -108,9 +110,26 @@ public final class Protocol {
             }
             sb.append(DOLLAR);
             sb.append(getStringLength(value));
-            sb.append("\r\n");
+            sb.append(CRLF);
             sb.append(value);
-            sb.append("\r\n");
+            sb.append(CRLF);
+        } else if (command == Command.INFO) {
+            if (args.size() != 1) {
+                throw new RuntimeException("Unknown INFO Process");
+            }
+            String section = args.get(0);
+            // TODO: information of section 분리 필요 key:{value}
+            if (section.equals("replication")) {
+                String value = """
+                        # Replication
+                        role:master
+                        """;
+                sb.append(DOLLAR);
+                sb.append(getStringLength(value));
+                sb.append(CRLF);
+                sb.append(value);
+                sb.append(CRLF);
+            }
         } else if (command == Command.UNKNOWN) {
             throw new RuntimeException("unknown command");
         }
@@ -129,7 +148,7 @@ public final class Protocol {
     }
 
     enum Command {
-        PING, ECHO,
+        PING, ECHO, INFO,
         SET, GET,
         UNKNOWN;
 
