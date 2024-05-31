@@ -7,6 +7,8 @@ public class Configuration {
     public static String role = "master";
     public static String masterRepliId = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb"; // TODO : this is hardcoded replication id
     public static Integer masterReplOffset = 0;
+    public static Integer slavePort = 0;
+    public static String capa = "";
 
     public static String replicationInfo() {
         return """

@@ -34,10 +34,36 @@ public class ReplicaTask implements Runnable {
     }
 
     void handshake(BufferedReader br, PrintWriter pw) throws IOException {
+        if (!sendPingToMaster(br, pw)) {
+            Logger.error("Failed send ping to master");
+            return;
+        }
+
+        if (!sendReplconfToMaster(br, pw)) {
+            Logger.error("Failed send REPLCONF to master");
+            return;
+        }
+
+    }
+
+    private boolean sendPingToMaster(BufferedReader br, PrintWriter pw) throws IOException {
         // 1. send a PING to master
         pw.print("*1\r\n$4\r\nPING\r\n");
         pw.flush();
-        String read = br.readLine();
-        System.out.println(read);
+        String receive = br.readLine();
+        return receive.equals("+PONG");
+    }
+
+    private boolean sendReplconfToMaster(BufferedReader br, PrintWriter pw) throws IOException {
+        pw.print("*3\r\n$8\r\nREPLCONF\r\n$14\r\nlistening-port\r\n$4\r\n%s\r\n".formatted(Configuration.port));
+        pw.flush();
+        String response = br.readLine();
+        if (!response.equals("+OK")) {
+            return false;
+        }
+        pw.print("*3\r\n$8\r\nREPLCONF\r\n$4\r\ncapa\r\n$6\r\npsync2\r\n");
+        pw.flush();
+        response = br.readLine();
+        return response.equals("+OK");
     }
 }

@@ -127,6 +127,16 @@ public final class Protocol {
                 sb.append(info);
                 sb.append(CRLF);
             }
+        } else if (command == Command.REPLCONF) {
+            if (args.get(0).equals("listening-port")) {
+                Configuration.slavePort = Integer.valueOf(args.get(1));
+            }
+            if (args.get(0).equals("capa")) {
+                Configuration.capa = args.get(1);
+            }
+            sb.append(PLUS);
+            sb.append(ResponseKeyword.OK);
+            sb.append(CRLF);
         } else if (command == Command.UNKNOWN) {
             throw new RuntimeException("unknown command");
         }
@@ -145,7 +155,7 @@ public final class Protocol {
     }
 
     enum Command {
-        PING, ECHO, INFO,
+        PING, ECHO, INFO, REPLCONF,
         SET, GET,
         UNKNOWN;
 
