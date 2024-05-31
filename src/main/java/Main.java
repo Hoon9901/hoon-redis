@@ -1,7 +1,7 @@
 import client.ClientTask;
 import log.Logger;
 import server.Configuration;
-import server.ReplicationTask;
+import server.ReplicaTask;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -45,7 +45,7 @@ public class Main {
 
     static void replicationTask() throws IOException {
         Socket masterSocket = new Socket(Configuration.masterIp, Configuration.masterPort);
-        Thread.ofVirtual().start(new ReplicationTask(masterSocket));
+        Thread.ofVirtual().start(new ReplicaTask(masterSocket));
     }
 
     public static void loop(ServerSocket serverSocket) throws IOException {

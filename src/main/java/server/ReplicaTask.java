@@ -5,11 +5,11 @@ import log.Logger;
 import java.io.*;
 import java.net.Socket;
 
-public class ReplicationTask implements Runnable {
+public class ReplicaTask implements Runnable {
 
     private final Socket masterSocket;
 
-    public ReplicationTask(Socket masterSocket) {
+    public ReplicaTask(Socket masterSocket) {
         this.masterSocket = masterSocket;
     }
 
