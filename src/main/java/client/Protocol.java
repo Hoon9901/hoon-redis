@@ -1,12 +1,12 @@
 package client;
 
 import log.Logger;
+import server.Configuration;
 import server.MemoryStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.cert.CRL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,8 +122,8 @@ public final class Protocol {
             if (section.equals("replication")) {
                 String value = """
                         # Replication
-                        role:master
-                        """;
+                        role:%s
+                        """.formatted(Configuration.role);
                 sb.append(DOLLAR);
                 sb.append(getStringLength(value));
                 sb.append(CRLF);
