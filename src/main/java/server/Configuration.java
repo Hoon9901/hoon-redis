@@ -3,7 +3,7 @@ package server;
 public class Configuration {
     public static int port = 6379;
     public static String masterIp = "";
-    public static String masterPort = "";
+    public static Integer masterPort = 0;
     public static String role = "master";
     public static String masterRepliId = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb"; // TODO : this is hardcoded replication id
     public static Integer masterReplOffset = 0;
@@ -20,5 +20,9 @@ public class Configuration {
                         masterRepliId,
                         masterReplOffset
                 );
+    }
+
+    public static boolean isReplicationMode() {
+        return role.equals("slave");
     }
 }
