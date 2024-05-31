@@ -120,14 +120,11 @@ public final class Protocol {
             String section = args.get(0);
             // TODO: information of section 분리 필요 key:{value}
             if (section.equals("replication")) {
-                String value = """
-                        # Replication
-                        role:%s
-                        """.formatted(Configuration.role);
+                String info = Configuration.replicationInfo();
                 sb.append(DOLLAR);
-                sb.append(getStringLength(value));
+                sb.append(getStringLength(info));
                 sb.append(CRLF);
-                sb.append(value);
+                sb.append(info);
                 sb.append(CRLF);
             }
         } else if (command == Command.UNKNOWN) {
